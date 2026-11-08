@@ -1,0 +1,513 @@
+{
+ "total": 49.537,
+ "scenes": [
+  {
+   "i": 0,
+   "start": 0.0,
+   "dur": 5.108,
+   "narr": [
+    [
+     0.15,
+     2.25,
+     "O objeto mais sujo da sua cozinha não é o lixo."
+    ],
+    [
+     2.52,
+     1.419,
+     "E nem o vaso sanitário."
+    ],
+    [
+     4.059,
+     0.749,
+     "É isso aqui."
+    ]
+   ]
+  },
+  {
+   "i": 1,
+   "start": 5.108,
+   "dur": 6.102,
+   "narr": [
+    [
+     5.258,
+     0.7,
+     "A esponja."
+    ],
+    [
+     6.078,
+     2.015,
+     "Você usa sabão e acha que ela está limpa."
+    ],
+    [
+     8.213,
+     1.338,
+     "Mas o sabão limpa o prato."
+    ],
+    [
+     9.671,
+     1.239,
+     "Ele não limpa a esponja."
+    ]
+   ]
+  },
+  {
+   "i": 2,
+   "start": 11.21,
+   "dur": 6,
+   "narr": [
+    [
+     11.36,
+     1.303,
+     "Aqui dentro, é uma selva."
+    ],
+    [
+     12.783,
+     2.64,
+     "Umidade, restos de comida e a temperatura perfeita."
+    ]
+   ]
+  },
+  {
+   "i": 3,
+   "start": 17.21,
+   "dur": 7.053,
+   "narr": [
+    [
+     17.36,
+     1.889,
+     "As bactérias não apenas sobrevivem."
+    ],
+    [
+     19.369,
+     1.113,
+     "Elas se multiplicam."
+    ],
+    [
+     20.603,
+     1.148,
+     "E quando você aperta..."
+    ],
+    [
+     21.871,
+     0.907,
+     "elas não morrem."
+    ],
+    [
+     22.897,
+     1.065,
+     "Elas são expulsas."
+    ]
+   ]
+  },
+  {
+   "i": 4,
+   "start": 24.263,
+   "dur": 6,
+   "narr": [
+    [
+     24.413,
+     1.528,
+     "Você não está lavando a louça."
+    ],
+    [
+     26.061,
+     1.376,
+     "Você está temperando ela."
+    ],
+    [
+     27.558,
+     1.102,
+     "E o pior: você não vê."
+    ]
+   ]
+  },
+  {
+   "i": 5,
+   "start": 30.263,
+   "dur": 7.628,
+   "narr": [
+    [
+     30.413,
+     1.076,
+     "Água não resolve."
+    ],
+    [
+     31.609,
+     1.701,
+     "Limpar com vinagre não resolve."
+    ],
+    [
+     33.43,
+     1.276,
+     "Você precisa de calor."
+    ],
+    [
+     34.826,
+     1.53,
+     "Dois minutos no micro-ondas."
+    ],
+    [
+     36.477,
+     1.114,
+     "Olha o que acontece."
+    ]
+   ]
+  },
+  {
+   "i": 6,
+   "start": 37.891,
+   "dur": 6.336,
+   "narr": [
+    [
+     38.041,
+     0.858,
+     "Elas explodem."
+    ],
+    [
+     39.019,
+     2.3,
+     "O micro-ondas é o único jeito de zerar o jogo."
+    ],
+    [
+     41.439,
+     2.488,
+     "Mas se você deixar úmida de novo, a selva volta."
+    ]
+   ]
+  },
+  {
+   "i": 7,
+   "start": 44.227,
+   "dur": 5.31,
+   "narr": [
+    [
+     44.377,
+     2.111,
+     "Manda isso pra quem lava a louça na sua casa."
+    ],
+    [
+     46.608,
+     1.329,
+     "Antes do jantar de hoje."
+    ]
+   ]
+  }
+ ],
+ "captions": [
+  {
+   "t0": 0.15,
+   "t1": 0.799,
+   "text": "O objeto mais"
+  },
+  {
+   "t0": 0.799,
+   "t1": 1.362,
+   "text": "sujo da sua"
+  },
+  {
+   "t0": 1.362,
+   "t1": 2.011,
+   "text": "cozinha não é"
+  },
+  {
+   "t0": 2.011,
+   "t1": 2.4,
+   "text": "o lixo."
+  },
+  {
+   "t0": 2.52,
+   "t1": 3.011,
+   "text": "E nem o"
+  },
+  {
+   "t0": 3.011,
+   "t1": 3.939,
+   "text": "vaso sanitário."
+  },
+  {
+   "t0": 4.059,
+   "t1": 4.808,
+   "text": "É isso aqui."
+  },
+  {
+   "t0": 5.258,
+   "t1": 5.958,
+   "text": "A esponja."
+  },
+  {
+   "t0": 6.078,
+   "t1": 6.794,
+   "text": "Você usa sabão"
+  },
+  {
+   "t0": 6.794,
+   "t1": 7.332,
+   "text": "e acha que"
+  },
+  {
+   "t0": 7.332,
+   "t1": 8.093,
+   "text": "ela está limpa."
+  },
+  {
+   "t0": 8.213,
+   "t1": 8.813,
+   "text": "Mas o sabão"
+  },
+  {
+   "t0": 8.813,
+   "t1": 9.551,
+   "text": "limpa o prato."
+  },
+  {
+   "t0": 9.671,
+   "t1": 10.36,
+   "text": "Ele não limpa"
+  },
+  {
+   "t0": 10.36,
+   "t1": 10.91,
+   "text": "a esponja."
+  },
+  {
+   "t0": 11.36,
+   "t1": 12.012,
+   "text": "Aqui dentro,"
+  },
+  {
+   "t0": 12.012,
+   "t1": 12.663,
+   "text": "é uma selva."
+  },
+  {
+   "t0": 12.783,
+   "t1": 13.254,
+   "text": "Umidade,"
+  },
+  {
+   "t0": 13.254,
+   "t1": 14.103,
+   "text": "restos de comida"
+  },
+  {
+   "t0": 14.103,
+   "t1": 14.904,
+   "text": "e a temperatura"
+  },
+  {
+   "t0": 14.904,
+   "t1": 15.423,
+   "text": "perfeita."
+  },
+  {
+   "t0": 17.36,
+   "t1": 18.232,
+   "text": "As bactérias não"
+  },
+  {
+   "t0": 18.232,
+   "t1": 18.62,
+   "text": "apenas"
+  },
+  {
+   "t0": 18.62,
+   "t1": 19.249,
+   "text": "sobrevivem."
+  },
+  {
+   "t0": 19.369,
+   "t1": 19.805,
+   "text": "Elas se"
+  },
+  {
+   "t0": 19.805,
+   "t1": 20.483,
+   "text": "multiplicam."
+  },
+  {
+   "t0": 20.603,
+   "t1": 21.265,
+   "text": "E quando você"
+  },
+  {
+   "t0": 21.265,
+   "t1": 21.751,
+   "text": "aperta..."
+  },
+  {
+   "t0": 21.871,
+   "t1": 22.777,
+   "text": "elas não morrem."
+  },
+  {
+   "t0": 22.897,
+   "t1": 23.405,
+   "text": "Elas são"
+  },
+  {
+   "t0": 23.405,
+   "t1": 23.963,
+   "text": "expulsas."
+  },
+  {
+   "t0": 24.413,
+   "t1": 25.108,
+   "text": "Você não está"
+  },
+  {
+   "t0": 25.108,
+   "t1": 25.941,
+   "text": "lavando a louça."
+  },
+  {
+   "t0": 26.061,
+   "t1": 26.602,
+   "text": "Você está"
+  },
+  {
+   "t0": 26.602,
+   "t1": 27.438,
+   "text": "temperando ela."
+  },
+  {
+   "t0": 27.558,
+   "t1": 28.043,
+   "text": "E o pior:"
+  },
+  {
+   "t0": 28.043,
+   "t1": 28.66,
+   "text": "você não vê."
+  },
+  {
+   "t0": 30.413,
+   "t1": 30.951,
+   "text": "Água não"
+  },
+  {
+   "t0": 30.951,
+   "t1": 31.489,
+   "text": "resolve."
+  },
+  {
+   "t0": 31.609,
+   "t1": 32.193,
+   "text": "Limpar com"
+  },
+  {
+   "t0": 32.193,
+   "t1": 32.824,
+   "text": "vinagre não"
+  },
+  {
+   "t0": 32.824,
+   "t1": 33.31,
+   "text": "resolve."
+  },
+  {
+   "t0": 33.43,
+   "t1": 34.298,
+   "text": "Você precisa de"
+  },
+  {
+   "t0": 34.298,
+   "t1": 34.706,
+   "text": "calor."
+  },
+  {
+   "t0": 34.826,
+   "t1": 35.665,
+   "text": "Dois minutos no"
+  },
+  {
+   "t0": 35.665,
+   "t1": 36.357,
+   "text": "micro-ondas."
+  },
+  {
+   "t0": 36.477,
+   "t1": 37.058,
+   "text": "Olha o que"
+  },
+  {
+   "t0": 37.058,
+   "t1": 37.591,
+   "text": "acontece."
+  },
+  {
+   "t0": 38.041,
+   "t1": 38.899,
+   "text": "Elas explodem."
+  },
+  {
+   "t0": 39.019,
+   "t1": 39.786,
+   "text": "O micro-ondas é"
+  },
+  {
+   "t0": 39.786,
+   "t1": 40.462,
+   "text": "o único jeito"
+  },
+  {
+   "t0": 40.462,
+   "t1": 41.003,
+   "text": "de zerar o"
+  },
+  {
+   "t0": 41.003,
+   "t1": 41.319,
+   "text": "jogo."
+  },
+  {
+   "t0": 41.439,
+   "t1": 42.049,
+   "text": "Mas se você"
+  },
+  {
+   "t0": 42.049,
+   "t1": 42.847,
+   "text": "deixar úmida de"
+  },
+  {
+   "t0": 42.847,
+   "t1": 43.552,
+   "text": "novo, a selva"
+  },
+  {
+   "t0": 43.552,
+   "t1": 43.927,
+   "text": "volta."
+  },
+  {
+   "t0": 44.377,
+   "t1": 45.053,
+   "text": "Manda isso pra"
+  },
+  {
+   "t0": 45.053,
+   "t1": 45.602,
+   "text": "quem lava a"
+  },
+  {
+   "t0": 45.602,
+   "t1": 46.193,
+   "text": "louça na sua"
+  },
+  {
+   "t0": 46.193,
+   "t1": 46.488,
+   "text": "casa."
+  },
+  {
+   "t0": 46.608,
+   "t1": 47.445,
+   "text": "Antes do jantar"
+  },
+  {
+   "t0": 47.445,
+   "t1": 47.937,
+   "text": "de hoje."
+  }
+ ]
+}

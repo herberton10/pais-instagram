@@ -1,0 +1,10 @@
+[
+ {"t0":0,"t1":4,"s":["O objeto mais sujo da sua cozinha não é o lixo.","E nem o vaso sanitário.","É isso aqui."]},
+ {"t0":4,"t1":9,"s":["A esponja.","Você usa sabão e acha que ela está limpa.","Mas o sabão limpa o prato.","Ele não limpa a esponja."]},
+ {"t0":9,"t1":15,"s":["Aqui dentro, é uma selva.","Umidade, restos de comida e a temperatura perfeita."]},
+ {"t0":15,"t1":22,"s":["As bactérias não apenas sobrevivem.","Elas se multiplicam.","E quando você aperta...","elas não morrem.","Elas são expulsas."]},
+ {"t0":22,"t1":28,"s":["Você não está lavando a louça.","Você está temperando ela.","E o pior: você não vê."]},
+ {"t0":28,"t1":35,"s":["Água não resolve.","Limpar com vinagre não resolve.","Você precisa de calor.","Dois minutos no micro-ondas.","Olha o que acontece."]},
+ {"t0":35,"t1":41,"s":["Elas explodem.","O micro-ondas é o único jeito de zerar o jogo.","Mas se você deixar úmida de novo, a selva volta."]},
+ {"t0":41,"t1":46,"s":["Manda isso pra quem lava a louça na sua casa.","Antes do jantar de hoje."]}
+]
