@@ -1,6 +1,8 @@
 import sys, json, numpy as np, soundfile as sf
 from scipy import signal
 B = sys.argv[1]
+VOICE = (sys.argv[2] if len(sys.argv) > 2 else 'voice') == 'voice'
+OUTF = sys.argv[3] if len(sys.argv) > 3 else B + '/mix.wav'
 C = json.load(open(B + '/cues.json'))
 SR = 48000
 T = C['total'] + 0.3
@@ -243,14 +245,13 @@ while t < C['tickEnd']:
     t += .48 * (1 - u) ** 1.6 + .07; k += 1
 fx.add(C['bactAppear'], blip(420), db(-14))
 for i, g in enumerate(C['gens']): fx.add(g, blip(520 + i * 40), db(-18 - i * .5), pan=rng.uniform(-.4, .4))
-for x in C['xrayOn']: fx.add(x, zap(), db(-17))
+for x in C['xrayOn']: fx.add(x, sparkle(), db(-22))
 fx.add(C['squeeze'], squelch(.45), db(-8))
 fx.add(C['splash'] - .25, splash_echo(), db(-9))
 fx.add(C['glitch'], glitch(), db(-20))
 for g in C['glint']: fx.add(g, sparkle(), db(-16))
 fx.add(C['plateClink'], clink(1900, .4, 2), db(-14))
 fx.add(C['cupDoor'], thunk(130), db(-9))
-for s_ in C['stamps']: fx.add(s_, buzzer(), db(-14))
 fx.add(C['vinegar'][0], glug(C['vinegar'][1] - C['vinegar'][0]), db(-15))
 fx.add(C['toss'], swoosh(.4), db(-15))
 fx.add(C['slam'] - .02, thunk(95), db(-7)); fx.add(C['slam'], clink(3200, .1, 1), db(-22))
@@ -285,14 +286,16 @@ mus.add(C['musicResume'], m2, db(-15))
 # ducking music by narration envelope
 ne = filt(np.abs(nar), 'lowpass', 6); ne = ne / (ne.max() + 1e-9)
 duck = 1 - .45 * np.clip(ne * 3, 0, 1)
+if not VOICE:
+    nar = nar * 0; duck = np.ones(N) * db(3)
 L = nar * 1.0 + fx.L + amb.L + mus.L * duck
 R = nar * 1.0 + fx.R + amb.R + mus.R * duck
 mx = np.stack([L, R], 1)
 mx = np.tanh(mx * 1.1) / np.tanh(1.1)
 mx = norm(mx, db(-1))
-sf.write(B + '/mix.wav', mx.astype(np.float32), SR)
+sf.write(OUTF, mx.astype(np.float32), SR)
 print('ok', mx.shape[0] / SR)
-if len(sys.argv) > 2:
+if len(sys.argv) > 4:
     def r(x): return 20*np.log10(np.sqrt(np.mean(x**2))+1e-9)
     for a in range(0, int(T), 3):
         sl = slice(a*SR, (a+3)*SR)
