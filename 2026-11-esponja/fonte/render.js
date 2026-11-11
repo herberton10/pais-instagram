@@ -6,7 +6,7 @@ srv.listen(0,async()=>{
   const port=srv.address().port;
   const br=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
   const pg=await br.newPage({viewport:{width:1080,height:1920}});
-  pg.on('console',m=>{ if(m.type()==='error'||m.type()==='warning') console.log('PAGE',m.type(),m.text().slice(0,300)); });
+  pg.on('console',m=>{ if(m.type()==='error') console.log('PAGE',m.type(),m.text().slice(0,300)); });
   pg.on('pageerror',e=>console.log('PAGEERR',e.message));
   await pg.goto(`http://localhost:${port}/index.html?style=${process.env.STYLE||""}`);
   await pg.waitForFunction('window.__ready===true',null,{timeout:120000});

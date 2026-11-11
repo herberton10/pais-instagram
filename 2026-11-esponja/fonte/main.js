@@ -12,6 +12,9 @@ function nearestPal(hex) { const c = [(hex >> 16) & 255, (hex >> 8) & 255, hex &
 const TL = await (await fetch('/timeline.json')).json();
 const font = new FontFace('Mont', 'url(/node_modules/@fontsource/montserrat/files/montserrat-latin-900-normal.woff2)');
 await font.load(); document.fonts.add(font);
+const PIX = new URLSearchParams(location.search).get('style') === 'pixel';
+const PW = 216, PH = 384, PS = 5;
+if (PIX) { const pf = new FontFace('PS2P', 'url(/node_modules/@fontsource/silkscreen/files/silkscreen-latin-700-normal.woff2)'); await pf.load(); document.fonts.add(pf); }
 
 // ---------------------------------------------------------------- utils
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -45,13 +48,14 @@ function mesh(geo, m, parent, x = 0, y = 0, z = 0, cast = true) {
 function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, c); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.userData = { c, g, draw }; return t; }
 
 // ---------------------------------------------------------------- renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+const renderer = new THREE.WebGLRenderer({ antialias: !PIX, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); if (PIX) renderer.setSize(PW, PH, false); else renderer.setSize(W, H, false);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .86;
 renderer.autoClear = false;
 if (FLAT) { renderer.toneMapping = THREE.NoToneMapping; renderer.shadowMap.type = THREE.VSMShadowMap; }
+if (PIX) { renderer.shadowMap.type = THREE.BasicShadowMap; renderer.toneMappingExposure = .8; }
 const out = document.createElement('canvas'); out.width = W; out.height = H;
 const ctx = out.getContext('2d');
 document.body.appendChild(out);
@@ -66,7 +70,7 @@ scene.add(camera);
 
 const hemi = new THREE.HemisphereLight(0xf2f0ea, 0x9a8a72, 1.1); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0d8, 2.1); sun.position.set(-1.5, 4.5, -4.5); sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: .5, far: 15 });
+sun.shadow.mapSize.set(PIX ? 1024 : 2048, PIX ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: .5, far: 15 });
 sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.01; if (FLAT) { sun.shadow.radius = 16; sun.shadow.blurSamples = 20; sun.shadow.bias = -0.002; hemi.color.setHex(0xffffff); hemi.groundColor.setHex(0xffffff); sun.color.setHex(0xffffff); sun.position.set(-2.5, 5, 3); } scene.add(sun); scene.add(sun.target);
 const headLamp = new THREE.PointLight(0xffd58a, 0, 6, 1.6); camera.add(headLamp); headLamp.position.set(0, .1, 0);
 bscene.add(new THREE.HemisphereLight(0xeaffea, 0x224422, 1.6));
@@ -1031,6 +1035,64 @@ function setupComposer() {
         gl_FragColor = vec4(c, 1.); }` });
   composer.addPass(grainPass);
 }
+// ---------------- pixel art pipeline
+const ENDESGA = ['be4a2f','d77643','ead4aa','e4a672','b86f50','733e39','3e2731','a22633','e43b44','f77622','feae34','fee761','63c74d','3e8948','265c42','193c3e','124e89','0099db','2ce8f5','ffffff','c0cbdc','8b9bb4','5a6988','3a4466','262b44','181425','ff0044','68386c','b55088','f6757a','e8b796','c28569'];
+let pixRT = null, pixQuad = null, pixMat = null, pixScene = null;
+function setupPix() {
+  pixRT = new THREE.WebGLRenderTarget(PW, PH, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+  pixRT.depthTexture = new THREE.DepthTexture(PW, PH);
+  const pal = ENDESGA.map(h => new THREE.Vector3(parseInt(h.slice(0, 2), 16) / 255, parseInt(h.slice(2, 4), 16) / 255, parseInt(h.slice(4, 6), 16) / 255));
+  pixMat = new THREE.ShaderMaterial({
+    uniforms: { tColor: { value: pixRT.texture }, tDepth: { value: pixRT.depthTexture }, res: { value: new THREE.Vector2(PW, PH) }, cn: { value: .01 }, cf: { value: 80 }, pal: { value: pal }, vig: { value: .3 }, fade: { value: 0 }, flash: { value: 0 }, flashCol: { value: new THREE.Vector3(1, 1, 1) }, outline: { value: 1 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+    fragmentShader: `uniform sampler2D tColor; uniform sampler2D tDepth; uniform vec2 res; uniform float cn, cf, vig, fade, flash, outline; uniform vec3 flashCol; uniform vec3 pal[32]; varying vec2 vUv;
+      float lin(float d){ float z = d * 2. - 1.; return 2. * cn * cf / (cf + cn - z * (cf - cn)); }
+      float bayer2(vec2 a){ a = floor(a); return fract(dot(a, vec2(.5, a.y * .75))); }
+      float bayer4(vec2 a){ return bayer2(.5 * a) * .25 + bayer2(a); }
+      void main(){
+        vec2 px = 1. / res;
+        vec3 c = texture2D(tColor, vUv).rgb;
+        c = mix(c * 12.92, 1.055 * pow(max(c, vec3(0.)), vec3(1. / 2.4)) - .055, step(.0031308, c));
+        float d0 = lin(texture2D(tDepth, vUv).x); float dm = d0;
+        dm = min(dm, lin(texture2D(tDepth, vUv + vec2(px.x, 0.)).x)); dm = min(dm, lin(texture2D(tDepth, vUv - vec2(px.x, 0.)).x));
+        dm = min(dm, lin(texture2D(tDepth, vUv + vec2(0., px.y)).x)); dm = min(dm, lin(texture2D(tDepth, vUv - vec2(0., px.y)).x));
+        float edge = step(.07 * d0 + .008, d0 - dm) * outline;
+        c = mix(c, c * .3, edge);
+        vec2 q = vUv - .5; q.x *= .75; c *= 1. - vig * smoothstep(.2, .7, length(q));
+        c = mix(c, flashCol, flash); c *= 1. - fade;
+        c += (bayer4(gl_FragCoord.xy) - .5) * .085;
+        float best = 1e9; vec3 bc = pal[0];
+        for (int i = 0; i < 32; i++) { vec3 e = c - pal[i]; float dd = dot(e * e, vec3(.35, .5, .15)); if (dd < best) { best = dd; bc = pal[i]; } }
+        gl_FragColor = vec4(bc, 1.);
+      }` });
+  pixMat.toneMapped = false;
+  pixScene = new THREE.Scene(); pixQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), pixMat); pixScene.add(pixQuad); pixQuad.frustumCulled = false;
+}
+const capCv = document.createElement('canvas'); capCv.width = 360; capCv.height = 640; const capG = capCv.getContext('2d', { willReadFrequently: true });
+function drawCaptionPixel(t, alpha = 1) {
+  const c = TL.captions.find(c => t >= c.t0 && t < c.t1 + .06); if (!c || alpha < .5) return;
+  const txt = c.text.toUpperCase(); capG.clearRect(0, 0, 360, 640);
+  capG.font = '16px PS2P'; capG.textBaseline = 'top';
+  let w = capG.measureText(txt).width; let lines = [txt];
+  if (w > 340) { const ws = txt.split(' '); const h = Math.ceil(ws.length / 2); lines = [ws.slice(0, h).join(' '), ws.slice(h).join(' ')]; }
+  const y0 = 410 - (lines.length - 1) * 10 - ((t - c.t0) < .07 ? 2 : 0);
+  lines.forEach((ln, k) => {
+    const lw = capG.measureText(ln).width; const x = Math.round((360 - lw) / 2 / 2) * 2, y = y0 + k * 22;
+    capG.fillStyle = '#181425'; for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2], [-2, -2], [2, 2], [-2, 2], [2, -2], [0, 4], [2, 4], [-2, 4]]) capG.fillText(ln, x + dx, y + dy);
+    capG.fillStyle = '#ffffff'; capG.fillText(ln, x, y);
+  });
+  const id = capG.getImageData(0, 0, 360, 640), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { if (d[i + 3] > 110) { const wv = d[i] > 128; d[i] = wv ? 255 : 24; d[i + 1] = wv ? 255 : 20; d[i + 2] = wv ? 255 : 37; d[i + 3] = 255; } else d[i + 3] = 0; }
+  capG.putImageData(id, 0, 0);
+  ctx.imageSmoothingEnabled = false; ctx.drawImage(capCv, 0, 0, W, H);
+}
+function drawGlintPixel(g) {
+  if (!g || g.a <= .05) return; const v = g.p.clone().project(camera); if (v.z > 1) return;
+  const x = Math.round((v.x * .5 + .5) * PW), y = Math.round((-v.y * .5 + .5) * PH); const L = Math.round(1 + 4 * g.a);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(x * PS, (y - L) * PS, PS, (2 * L + 1) * PS); ctx.fillRect((x - L) * PS, y * PS, (2 * L + 1) * PS, PS);
+  if (L > 2) { ctx.fillStyle = '#fee761'; ctx.fillRect((x - 1) * PS, (y - 1) * PS, PS, PS); ctx.fillRect((x + 1) * PS, (y + 1) * PS, PS, PS); ctx.fillRect((x + 1) * PS, (y - 1) * PS, PS, PS); ctx.fillRect((x - 1) * PS, (y + 1) * PS, PS, PS); ctx.fillStyle = '#ffffff'; ctx.fillRect(x * PS, y * PS, PS, PS); }
+}
 function renderFrame(T) {
   T_now = T;
   reset();
@@ -1044,6 +1106,23 @@ function renderFrame(T) {
   for (const m of [M.sponge, M.scrub]) { m.opacity = 1 - .72 * x; m.depthWrite = x < .05; }
   bactMat.emissiveIntensity = x > .01 ? .55 : .35;
   flushBact();
+  if (PIX) {
+    if (!pixRT) setupPix();
+    const bg = new THREE.Color(ST_.bg); renderer.setClearColor(new THREE.Color().setRGB(bg.r, bg.g, bg.b), 1);
+    renderer.setRenderTarget(pixRT); renderer.clear();
+    renderer.shadowMap.autoUpdate = true; camera.layers.set(0); renderer.render(scene, camera); renderer.shadowMap.autoUpdate = false;
+    if (BL.length) { if (!ST_.depthBact) renderer.clearDepth(); renderer.render(bscene, camera); }
+    renderer.setRenderTarget(null);
+    const fc = (ST_.flashCol || '255,255,255').split(',').map(v => +v / 255);
+    Object.assign(pixMat.uniforms.vig, { value: ST_.inside ? .85 : .3 }); pixMat.uniforms.fade.value = ST_.fade || 0; pixMat.uniforms.flash.value = ST_.flash || 0; pixMat.uniforms.flashCol.value.set(fc[0], fc[1], fc[2]);
+    pixMat.uniforms.cn.value = camera.near; pixMat.uniforms.cf.value = camera.far;
+    renderer.clear(); renderer.render(pixScene, ocam);
+    ctx.imageSmoothingEnabled = false; ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    if (ST_.whip > .01) { ctx.fillStyle = '#181425'; ctx.fillRect(0, 0, W, H); const n = 7; for (let i = 0; i < n; i++) { ctx.globalAlpha = i === Math.floor(n / 2) ? 1 : .35; ctx.drawImage(renderer.domElement, Math.round((i - n / 2) * 12 * ST_.whip) * PS, 0, W, H); } ctx.globalAlpha = 1; }
+    else ctx.drawImage(renderer.domElement, 0, 0, W, H);
+    drawGlintPixel(ST_.glint); drawGlintPixel(ST_.glint2);
+    return out;
+  }
   if (FLAT) {
     if (!composer) setupComposer();
     const fb = nearestPal(ST_.bg); renderer.setClearColor(new THREE.Color().setRGB(((fb >> 16) & 255) / 255, ((fb >> 8) & 255) / 255, (fb & 255) / 255, THREE.SRGBColorSpace).convertSRGBToLinear(), 1); if (scene.fog) scene.fog.color.setHex(PAL.k);
@@ -1067,7 +1146,7 @@ function renderFrame(T) {
   if (ST_.fade > 0) { ctx.fillStyle = `rgba(0,0,0,${ST_.fade})`; ctx.fillRect(0, 0, W, H); }
   return out;
 }
-window.renderBoth = (T, q = .93) => { renderFrame(T); const clean = out.toDataURL('image/jpeg', q); drawCaption(T, 1 - (ST_.fade || 0)); return [clean, out.toDataURL('image/jpeg', q)]; };
+window.renderBoth = (T, q = .93) => { renderFrame(T); const clean = out.toDataURL('image/jpeg', q); (PIX ? drawCaptionPixel : drawCaption)(T, 1 - (ST_.fade || 0)); return [clean, out.toDataURL('image/jpeg', q)]; };
 
 // cue export for audio
 function cues() {
@@ -1103,7 +1182,7 @@ function cues() {
 }
 window.__dbg = { scene, renderer, get fog() { return scene.fog; } };
 window.__ready = true;
-window.renderFrame = (T, q = .9) => { renderFrame(T); drawCaption(T, 1 - (ST_.fade || 0)); return out.toDataURL('image/jpeg', q); };
+window.renderFrame = (T, q = .9) => { renderFrame(T); (PIX ? drawCaptionPixel : drawCaption)(T, 1 - (ST_.fade || 0)); return out.toDataURL('image/jpeg', q); };
 window.renderOnly = (T) => { renderFrame(T); return true; };
 window.getCues = cues;
 window.renderFrameCanvas = (T) => {
